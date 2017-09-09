@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8">
+	<title>jquery表单验证插件使用</title>
+	<style type="text/css">
+
+		.shadow-1{
+			width:100px;
+			height:100px;
+			margin-bottom: 10px;
+			box-shadow:inset 0 0 10px 10px #a9a9a9;
+		}
+		#box{
+			width: 200px;
+			height: 200px;
+			border: 1px solid #a9a9a9;
+		}
+		.shadow-2{
+			width:100px;
+			height:100px;
+			display:inline-block;
+			margin-bottom: 10px;
+			box-shadow:0 1px 10px 1px #a9a9a9;
+			pointer-events: none; //阻止鼠标点击行为，但不能阻止键盘事件 
+		}
+		/*爱恨原则LoVe/HAte*/
+		a.shadow-2:link{
+			box-shadow: 0 1px 10px 1px #ccc;	
+		} 
+		a.shadow-2:visited{
+			box-shadow: 0 1px 10px 1px blue;	
+		}
+		a.shadow-2:hover{
+			box-shadow: 0 1px 10px 1px orange;	
+		}
+
+		a.shadow-2:active{
+			box-shadow: 0 1px 10px 1px black;	
+		}
+		.shadow-3{
+			width:100px;
+			height:100px;
+			box-shadow: -10px 0 10px 0 red, //盒阴影左边
+				10px 0 10px 0 black, //盒阴影右边
+				0 -10px 10px 0 orange, //盒阴影上边
+				0  10px 10px 0  green; //盒阴影下边
+		}
+	</style>
+	<script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.js"></script>
+	<script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("#box").click(function(){
+				alert('you can see the alert message because you clicked the the a tag inside the box and the javascript event-propagation is not stopped.');
+			});
+			$("#box .shadow-2").click(function(event){
+				//event.preventDefault(); //阻止默认行为
+				//event.stopPropagation(); //停止冒泡
+				return false ; //两个都可以阻止掉
+			});
+			//js动态生成验证码
+			function generateCheckCode(start,end){
+				return parseInt(Math.random()*(end - start + 1)+start);
+			};
+
+			$.fn.extend({
+
+				generateCode:function (){
+					$(this).html([generateCheckCode(0,100),'+',generateCheckCode(100,200),'='].join('')).
+					css({
+						fontStyle:'italic',
+						color:'red',
+						backgroundColor:'#ddd',
+						width:'200px',
+						minHeight:'1em'
+					});
+				}
+			});
+
+			//  页面加载完成后初始化生成验证码
+			$('#checkCode').generateCode();
+
+			//  点击验证码改变验证码
+			$('#checkCode').click(function(){
+				$(this).generateCode();
+			});
+			$.validator.setDefaults({
+  			 debug: true
+			});
+			var config={
+				debug:true,
+				rules:{
+					phoneNum:{
+						 required:true,
+						 minlength:11,
+						 maxlength:11,
+						 checkIsPhoneNum:true, //检查输入的手机号码有效性
+					},
+					check_code_input:{
+						required:true,
+						isEqual:true // 校验验证码是否正确
+					},
+					userPwd:{
+						required:true,
+					}
+				},	
+				messages:{
+				 	phoneNum:{
+				 		required:'请输入你的手机号！',
+				 		minlength:'手机号最长11位字符！',
+				 		maxlength:'手机号最长11位字符！',
+				 		checkIsPhoneNum:'请输入正确的手机号!',
+				 	},
+				 	check_code_input:{
+				 		required:'验证码不能为空！',
+				 		isEqual:'输入的验证码不正确！',
+				 	},
+				 	userPwd:'请输入密码!',
+				},
+				errorPlacement: function(error, element) {  
+    				error.appendTo(element.parent());  
+				},
+				submitHandler:function(form){
+		          	alert("submitted");   
+		            form.submit();
+      			}    
+			};
+
+			// 校验是否是合格的手机号码
+			$.validator.addMethod('checkIsPhoneNum',function(value,element,param){
+				console.dir(value  +' ==== ' + element);
+				//var phoneNum  = $('#'+element).val().trim();
+				var phoneNum = value.replace('\s+','');
+				var regex = /^1[0-9]{10}$/;
+				if(phoneNum.match(regex)){
+					return true;
+				}
+				return false;
+			},'请输入正确格式的手机号码!');
+
+            //	校验验证码是否正确
+            $.validator.addMethod('isEqual',function(value,element,param){
+            	console.dir(value);
+            	var inputCode = parseInt($.trim(value));
+            	var code = $(element).next().text();
+            	var realCode = parseInt(code.split('+')[0]) + 
+            				parseInt(code.split('+')[1].split('=')[0]);
+            	if(realCode == inputCode){
+            		return true;
+            	}else{
+            		return false;
+            	}
+
+            });
+			$('#myForm').validate(config);
+		});
+
+	</script>
+</head>
+<body>
+	<form id="myForm" action="#" method="post">
+		<div>
+			<span>手机号：</span>
+			<input type="text" id="phoneNum" name="phoneNum"/>
+		</div>
+		<div>
+			<span>验证码:</span>
+			<input type="text" id="check_code_input" name="check_code_input" />
+			<span id="checkCode"></span>
+		</div>
+		<div>
+			<span>密码:</span>
+			<input type="passworld" id="userPwd" name="userPwd" />
+			
+		</div>
+		<div>
+			<input type="submit" value="提交"/>
+			<input type="reset" name="重置"/>
+		</div>
+	</form>
+
+
+	<div class="shadow-1"></div>
+	<div id="box">
+		<a class="shadow-2" href="http://www.baidu.com" target="_blank">点击</a>
+	</div>
+	<div class="shadow-3"></div>
+</body>
+</html>
