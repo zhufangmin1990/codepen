@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>js函数记忆</title>
+    <!--<script>
+
+        //函数记忆第一版
+        var memoize = function(func){
+            console.log(this); //window
+            var cache ={};
+            return function(){
+                var key = arguments.length+Array.prototype.join.call(arguments,',');
+                if(cache[key]) {
+                    return cache[key];
+                }
+                else if(!cache[key]){
+                    return cache[key]=func.apply(this,arguments);
+                }
+            }
+        };
+        var add =function(a,b,c){
+            return a+b+c;
+        };
+        //  使用函数记忆
+        var memoizeAdd = memoize(add);
+
+        console.time('use memoize');
+        for(var i=0 ; i<10000;i++){
+            memoizeAdd(1,2,3);
+        }
+        console.timeEnd('use memoize');
+
+
+       for(var i=0 ; i<10000;i++){
+            add(1,2,3);
+        }
+        console.timeEnd('not use memoize');
+
+
+       var propValue =function(obj){
+         return obj.value;
+       };
+        // 当缓存函数传入对象时，由于join函数会将调用toString方法将参数变成'[Object object]'
+        // 导致缓存对象key始终相同，结果有误
+       var memoizePropValue =memoize(propValue);
+       console.log(memoizePropValue({value:1}));//1
+       console.log(memoizePropValue({value:2}));//1
+    </script>-->
+    <script>
+        //函数记忆第二版
+        var memoize =function(func,hasher){
+            var memoize = function(key){
+                var cache = memoize.cache;
+                var address = ''+(hasher?hasher.apply(this,arguments):key);
+                if(!cache[address]){
+                    cache[address] = func.apply(this,arguments);
+                }
+                return cache[address];
+            };
+            memoize.cache={};
+            return memoize;
+        };
+
+        var add =function(a,b,c){
+          return a+b+c;
+        };
+        var memoizeAdd =memoize(add,function(){
+           return JSON.stringify(Array.prototype.slice.apply(arguments));
+        });
+
+        console.log(memoizeAdd(1,2,3));//6
+        console.log(memoizeAdd(1,2,4));//7
+    </script>
+</head>
+<body>
+    <h1>
+            函数记忆是将函数得计算结果缓存起来，当下次以相同的参数调用该函数的时候，<br>
+        不再去计算，而是直接将缓存的结果取出。函数记忆是一种编程技巧，本质上是牺牲算法的空间复杂度<br>
+            以换取更优的时间复杂度。
+    </h1>
+</body>
+</html>
