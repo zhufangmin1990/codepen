@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>肾病失能</title>
+	<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+	<script src="http://mockjs.com/dist/mock.js"></script>
+</head>
+<body>
+	<form id="helloForm" method="post" action="hello.json">
+		<p class="">
+			<label for="userName">用户名:</label>
+			<input type="text" id="userName" name="userName" />
+		</p>
+		<h3 class="errorContainner"></h3>
+		<p class="">
+			<label>被保人年龄</label>
+			<select name="age">
+				<option value="1">0-1周岁</option>
+				<option value="2">1-2周岁</option>
+				<option value="3">2-3周岁</option>
+				<option value="4">4-5周岁</option>
+				<option value="5">6-8周岁 </option>
+			</select>
+		</p>
+		<h3 class="errorContainner"></h3>
+		<!-- 被保人性别 -->
+		<p class="">
+			<label>性别</label>
+			<select name="insuredSex">
+				<option value="0">男</option>
+				<option value="1">女</option>
+			</select>
+		</p>
+		<h3 class="errorContainner"></h3>
+		<p class="">
+			<label>病龄</label>
+				<input type="radio" name="slowNephrosisAge" value="0" />0&le;病龄&lt;1
+				<input type="radio" name="slowNephrosisAge" value="1"  />1&le;病龄&lt;2
+				<input type="radio" name="slowNephrosisAge" value="2"  />病龄&ge;2
+			</label>
+		</p>
+		<h3 class="errorContainner"></h3>
+		<p class="">
+			<label>慢性肾病</label>
+			<select name="slowNephrosisTerm" required data-msg="please fill this messages.">
+				<option value="1">1期</option>
+				<option value="2">2期</option>
+				<option value="3">3期</option>
+				<option value="4">4期</option>
+				<option value="5">5期</option>
+			</select>
+		</p>
+		<h3 class="errorContainner"></h3>
+		<!-- 是否患有糖尿病 -->
+		<p class="">
+			<label>是否患有糖尿病</label>
+			<select name="has">
+				<option value="0">已患</option>
+				<option value="1">未患</option>
+			</select>
+		</p>
+		<h3 class="errorContainner"></h3>
+	</form>
+	<button type="button">提交</button>
+	<script type="text/javascript">
+		$(function(){
+
+			Mock.mock(/\d*hello.json$/,function(options){
+				return Mock.mock({
+					'status':200,
+					'msg':'ajax请求成功!'
+				});
+			});
+
+			$("[name=slowNephrosisAge]").change(function(){
+				console.log("病龄:"+$(this).val());
+				console.log("病龄:"+$("[name=slowNephrosisAge]:checked").val());
+			});
+
+			$("[name='slowNephrosisTerm']").change(function(){
+				let slowNephrosisTerm = $(this).val();
+				console.log("分期阶段:"+slowNephrosisTerm);
+				if(slowNephrosisTerm>2){
+					alert("分期阶段大于2期的，禁止投保该产品");
+				}	
+			});
+
+			$("[name='insuredSex']").change(function(){
+				console.log($("[name='insuredSex']").val());
+			});
+
+			
+
+			/*表单校验*/
+			var validator = $("#helloForm").validate({
+				rules:{
+					userName:{
+						required:true,
+						minlength:5,
+						maxlength:10,
+						isMatched:true,
+					}
+				},
+				messages:{
+					userName:{
+						rquired:"this field is required!",
+						minlength:'This field required at least  5 words.',
+						maxlength:'This field required max-length is 10 words.',
+						isMatched:'The name must be zhufangmin!'
+					}
+				},
+				//表单校验成功的回调
+				submitHandler:function(form){
+					alert("submit");
+				},
+				errorElement:"span",
+				errorPlacement:function(error,element){
+					error.appendTo(element.parent("p").next(".errorContainner"));
+				},
+
+			});
+			
+			$.validator.addMethod("isMatched", function(value, element) {
+  				return /^zhufangmin$/.test(value);
+			});
+
+			/*提交表单*/
+			$("button").click(function(){
+				//if the specified from is valid ,then submit the form.
+				if($("#helloForm").valid()){
+					var data =$("#helloForm").serialize();
+					$.ajax({
+						url:"/hello.json",
+						type:"post",
+						data:data,
+						dataType:'json',
+						success:function(resp){
+							if(resp.status == '200') alert(resp.msg);
+
+						}
+					});
+				}
+				
+			});
+			
+
+		});
+	</script>
+</body>
+</html>
