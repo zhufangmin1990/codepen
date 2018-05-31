@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>css3实现更多菜单icon</title>
+	<style type="text/css">
+		*{
+			box-sizing: border-box;
+		}
+		.icon-box{
+			width:18px;
+			height:16px;
+			display: inline-block;
+			transition-property: transform;
+			transition-duration: .3s;
+			transition-delay: initial;
+			transition-timing-function: ease-out;
+			background-color: transparent;
+			
+		}
+		.icon-box:hover{
+			transform:rotate(90deg);
+		}
+		.icon-box:hover .icon:after,.icon-box:hover .icon:before{
+			background-color: #2291f7;
+		}
+
+		.icon-box:hover .icon-top:before{
+			transform:rotate(45deg);
+		}
+		.icon{
+			width:14px;
+			height:8px;
+			display: block;
+			position: relative;
+		}
+		.icon-top:before,
+		.icon-top:after,
+		.icon-bottom:before,
+		.icon-bottom:after{
+			content:' ';
+			display: block;
+			position:absolute;
+			top:0;
+			background: #9a9a9a;
+			width:6px;
+			height: 6px;
+		}
+		.icon-top:before{
+			transition-property: transform;
+			transition-duration: .3s;
+			transition-timing-function: ease-out;
+			transition-delay: .3s;
+		}
+		.icon-top:after,.icon-bottom::after{
+			left:8px;
+		}
+	</style>
+</head>
+<body>
+	<a href="https://www.baidu.com" class="icon-box">
+		<i class="icon icon-top"></i>
+		<i class="icon icon-bottom"></i>
+	</a>
+</body>
+</html>
