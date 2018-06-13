@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>flex布局</title>
+	<style type="text/css">
+		*{
+			padding: 0;
+			margin: 0;
+			box-sizing: border-box;
+		}
+		.contain{
+			display:flex;
+			width:500px;
+			height: 100px;
+			border:1px solid #aaa;
+			flex-direction:row;
+			flex-wrap:nowrap;
+			/*定义子元素在主轴上的对齐方式*/
+			justify-content:flex-start; 
+			/*定义项目在交叉轴上的对齐方式*/
+			align-items:flex-start ; 
+			/*定义项目交叉轴的对齐方式*/
+			align-content: center;
+
+
+		}
+		.item{
+			width: 40px;
+			height:40px;
+		}
+		.item:nth-child(1){
+			background-color:blue;
+		}
+		.item:nth-child(2){
+			width: 20px;
+			background-color:yellow;
+		}
+		
+		.item:nth-child(3){
+			background-color:green;
+			flex-grow:1.5;
+		}
+		
+		.item:nth-child(4){
+			width:50px;
+			background-color:pink;
+			/*default 0 定义项目的放大比例，即使存在剩余空间，也不放大*/
+			flex-grow:1;
+			/* default 1 定义项目的收缩比例 即如果空间不足，该项目将缩小,如果设置为0默认不收*/
+			flex-shrink:2;
+			/*定义项目的排列顺序,默认为0数值越小,排列越靠前*/
+			/*order:1;*/
+			/*定义项目自身在交叉轴的位置，默认auto继承父容器的align-items属性值*/
+			align-self:flex-end; 
+		}
+		
+	</style>
+</head>
+<body>
+	<div class="contain">
+		<div class="item">1</div>
+		<div class="item">2</div>
+		<div class="item">3</div>
+		<div class="item">4</div>
+	</div>
+</body>
+</html>
