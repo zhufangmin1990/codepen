@@ -29,3 +29,13 @@
 git reset --soft HEAD 回退到git commit前状态，stage区index还存在，工作区修改内容保留
 git reset --mixed HAED 同 git reset HAED 回退到git add前状态，工作区修改文件内容保留
 git reset --hard HEAD 彻底回退到上一次提交的版本，工作区、暂存区都不保留文件的内容改动，危险操作。
+
+6.如何查看git提交日志?
+答：使用git log 命令可以查看当前分支上的所以提交信息，按提交时间倒序排序，最新commit的显示在最前面
+也可以git log --pretty=oneline 简化显示提交日志。对应 commitid -- 提交注释
+
+7.要查看某次提交修改了哪些内容，使用什么命令？
+ 答：首先git log 查找某次提交对应的 comimitId，然后使用 git diff <commitId> --path 来对比查看。
+ 
+8.如何查看远程仓库信息？
+答：使用git remote show orgin。
